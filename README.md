@@ -17,6 +17,7 @@ npm install react-native-detector
 ```
 
 ### iOS
+
 ```sh
 cd ios && pod install
 ```
@@ -42,9 +43,10 @@ React.useEffect(() => {
 
 | Status | Goal                                   |
 | :----: | :------------------------------------- |
-|   ❌    | Android version of screenshot detector |
-|   ❌    | Screen recording detecting             |
-|   ❌    | Calls detector                         |
+|   ✅   | iOS version of screenshot detector     |
+|   🚧   | Android version of screenshot detector |
+|   🚧   | Screen recording detecting             |
+|   🚧   | Calls detector                         |
 
 ## Contributing
 
