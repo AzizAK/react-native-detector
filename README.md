@@ -3,12 +3,15 @@
 a simply and easy to use screenshot detector for react native
 
 ## Installation
+
 yarn
+
 ```sh
 yarn add react-native-detector
 ```
 
 npm
+
 ```sh
 npm install react-native-detector
 ```
@@ -16,19 +19,27 @@ npm install react-native-detector
 ## Usage
 
 ```js
-import {subscribe, unsubscribe} from "react-native-detector";
+import { subscribe, unsubscribe } from 'react-native-detector';
 
 // ...
-  React.useEffect(() => {
-    const userDidScreenshot = () => {
-      console.log("User took screenshot");
-    };
-    const eventEmitter = subscribe(userDidScreenshot);
-    return () => {
-      unsubscribe(eventEmitter);
-    };
-  }, []);
+React.useEffect(() => {
+  const userDidScreenshot = () => {
+    console.log('User took screenshot');
+  };
+  const eventEmitter = subscribe(userDidScreenshot);
+  return () => {
+    unsubscribe(eventEmitter);
+  };
+}, []);
 ```
+
+## Roadmap
+
+| Status | Goal                                   |
+| :----: | :------------------------------------- |
+|   ❌   | Android version of screenshot detector |
+|   ❌   | Screen recording detecting             |
+|   ❌   | Calls detector                         |
 
 ## Contributing
 
