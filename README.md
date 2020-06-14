@@ -72,12 +72,12 @@ React.useEffect(() => {
 
 ## Roadmap
 
-|         Status          | Goal                                   |
-| :---------------------: | :------------------------------------- |
-|           ✅            | iOS version of screenshot detector     |
-| ✅ (Thanks to @mhssn95) | Android version of screenshot detector |
-|           🚧            | Screen recording detecting             |
-|           🚧            | Calls detector                         |
+|                        Status                         | Goal                                   |
+| :---------------------------------------------------: | :------------------------------------- |
+|                          ✅                           | iOS version of screenshot detector     |
+| ✅ (Thanks to [@mhssn95](https://github.com/mhssn95)) | Android version of screenshot detector |
+|                          🚧                           | Screen recording detecting             |
+|                          🚧                           | Calls detector                         |
 
 ## Contributing
 
