@@ -22,31 +22,62 @@ npm install react-native-detector
 cd ios && pod install
 ```
 
+### android
+
+for Android you need to have access for `READ_EXTERNAL_STORAGE` to detect screenshots by user to do that you just need to add this line in `AndroidManifest.xml`
+
+```xml
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+```
+
+and get user permission
+
+```js
+import { PermissionsAndroid } from 'react-native';
+
+//...
+const requestPermission = async () => {
+  await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+    {
+      title: 'Get Read External Storage Access',
+      message: 'get read external storage access for detecting screenshots',
+      buttonNeutral: 'Ask Me Later',
+      buttonNegative: 'Cancel',
+      buttonPositive: 'OK',
+    }
+  );
+};
+```
+
 ## Usage
 
 ```js
-import { subscribe, unsubscribe } from 'react-native-detector';
+import {
+  addScreenshotListener,
+  removeScreenshotListener,
+} from 'react-native-detector';
 
 // ...
 React.useEffect(() => {
   const userDidScreenshot = () => {
     console.log('User took screenshot');
   };
-  const eventEmitter = subscribe(userDidScreenshot);
+  const listener = addScreenshotListener(userDidScreenshot);
   return () => {
-    unsubscribe(eventEmitter);
+    removeScreenshotListener(listener);
   };
 }, []);
 ```
 
 ## Roadmap
 
-| Status | Goal                                   |
-| :----: | :------------------------------------- |
-|   ✅   | iOS version of screenshot detector     |
-|   🚧   | Android version of screenshot detector |
-|   🚧   | Screen recording detecting             |
-|   🚧   | Calls detector                         |
+|         Status          | Goal                                   |
+| :---------------------: | :------------------------------------- |
+|           ✅            | iOS version of screenshot detector     |
+| ✅ (Thanks to @mhssn95) | Android version of screenshot detector |
+|           🚧            | Screen recording detecting             |
+|           🚧            | Calls detector                         |
 
 ## Contributing
 

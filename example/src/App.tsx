@@ -1,18 +1,39 @@
 import * as React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { subscribe, unsubscribe } from 'react-native-detector';
+import {
+  StyleSheet,
+  View,
+  Text,
+  PermissionsAndroid,
+  Platform,
+} from 'react-native';
+import {
+  addScreenshotListener,
+  removeScreenshotListener,
+} from 'react-native-detector';
 
 export default function App() {
   const [screenshotCounter, setScreenshotCounter] = React.useState<number>(0);
 
   React.useEffect(() => {
+    const requestPermission = async () => {
+      await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        {
+          title: 'Get Read External Storage Access',
+          message: 'get read external storage access for detecting screenshots',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        }
+      );
+    };
+    if (Platform.OS === 'android') requestPermission();
     const userDidScreenshot = () => {
-      //passe a function to state setter to get fresh state value
       setScreenshotCounter((screenshotCounter) => screenshotCounter + 1);
     };
-    const eventEmitter = subscribe(userDidScreenshot);
+    const eventEmitter = addScreenshotListener(userDidScreenshot);
     return () => {
-      unsubscribe(eventEmitter);
+      removeScreenshotListener(eventEmitter);
     };
   }, []);
 

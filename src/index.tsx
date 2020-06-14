@@ -1,20 +1,23 @@
-import { NativeModules, NativeEventEmitter } from 'react-native';
+import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
 const { Detector } = NativeModules;
 
 enum EventsName {
   UserDidTakeScreenshot = 'UIApplicationUserDidTakeScreenshotNotification',
 }
-export function subscribe(callback: Function) {
+
+export function addScreenshotListener(callback: Function) {
+  if (Platform.OS === 'android') Detector.startScreenshotDetection();
   const eventEmitter = new NativeEventEmitter(Detector);
   eventEmitter.addListener(
     EventsName.UserDidTakeScreenshot,
-    (e) => callback(e),
+    () => callback(),
     {}
   );
 
   return eventEmitter;
 }
 
-export function unsubscribe(eventEmitter: NativeEventEmitter) {
+export function removeScreenshotListener(eventEmitter: NativeEventEmitter) {
   eventEmitter.removeAllListeners(EventsName.UserDidTakeScreenshot);
+  if (Platform.OS === 'android') Detector.stopScreenshotDetection();
 }
