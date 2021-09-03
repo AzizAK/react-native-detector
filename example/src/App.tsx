@@ -6,10 +6,7 @@ import {
   PermissionsAndroid,
   Platform,
 } from 'react-native';
-import {
-  addScreenshotListener,
-  removeScreenshotListener,
-} from 'react-native-detector';
+import { addScreenshotListener } from 'react-native-detector';
 
 export default function App() {
   const [screenshotCounter, setScreenshotCounter] = React.useState<number>(0);
@@ -31,9 +28,9 @@ export default function App() {
     const userDidScreenshot = () => {
       setScreenshotCounter((screenshotCounter) => screenshotCounter + 1);
     };
-    const eventEmitter = addScreenshotListener(userDidScreenshot);
+    const unsubscribe = addScreenshotListener(userDidScreenshot);
     return () => {
-      removeScreenshotListener(eventEmitter);
+      unsubscribe();
     };
   }, []);
 
