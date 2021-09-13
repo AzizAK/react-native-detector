@@ -63,9 +63,9 @@ React.useEffect(() => {
   const userDidScreenshot = () => {
     console.log('User took screenshot');
   };
-  const listener = addScreenshotListener(userDidScreenshot);
+  const unsubscribe = addScreenshotListener(userDidScreenshot);
   return () => {
-    removeScreenshotListener(listener);
+    unsubscribe();
   };
 }, []);
 ```
