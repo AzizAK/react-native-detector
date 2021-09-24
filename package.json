@@ -1,6 +1,6 @@
 {
   "name": "react-native-detector",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "a screenshot detector for react native",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
