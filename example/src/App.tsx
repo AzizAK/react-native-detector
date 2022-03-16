@@ -12,29 +12,28 @@ export default function App() {
   const [screenshotCounter, setScreenshotCounter] = React.useState<number>(0);
 
   React.useEffect(() => {
-    
     const requestPermission = async () => {
       try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
           {
             title: 'Get Read External Storage Access',
-            message: 'get read external storage access for detecting screenshots',
+            message:
+              'get read external storage access for detecting screenshots',
             buttonNeutral: 'Ask Me Later',
             buttonNegative: 'Cancel',
             buttonPositive: 'OK',
           }
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log("You can use the READ_EXTERNAL_STORAGE");
+          console.log('You can use the READ_EXTERNAL_STORAGE');
         } else {
-          console.log("READ_EXTERNAL_STORAGE permission denied");
+          console.log('READ_EXTERNAL_STORAGE permission denied');
         }
       } catch (err) {
         console.warn(err);
       }
     };
-    
     if (Platform.OS === 'android') {
       requestPermission();
     }
