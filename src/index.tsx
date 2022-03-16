@@ -6,7 +6,7 @@ enum EventsName {
   UserDidTakeScreenshot = 'UIApplicationUserDidTakeScreenshotNotification',
 }
 
-const detectorEventEmitter = new NativeEventEmitter(Detector);
+const detectorEventEmitter = new NativeEventEmitter();
 
 type Unsubscribe = () => void;
 
