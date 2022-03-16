@@ -19,6 +19,7 @@ class ScreenshotDetectionDelegate(val context: Context, val listener: Screenshot
     lateinit var contentObserver: ContentObserver
 
     var isListening = false
+    var previousPath = ""
 
     fun startScreenshotDetection() {
         contentObserver = object : ContentObserver(Handler()) {
@@ -26,7 +27,8 @@ class ScreenshotDetectionDelegate(val context: Context, val listener: Screenshot
                 super.onChange(selfChange, uri)
                 if (isReadExternalStoragePermissionGranted() && uri != null) {
                     val path = getFilePathFromContentResolver(context, uri)
-                    if (isScreenshotPath(path)) {
+                    if (path != null && isScreenshotPath(path)) {
+                        previousPath = path
                         onScreenCaptured(path!!)
                     }
                 } else {
@@ -55,7 +57,7 @@ class ScreenshotDetectionDelegate(val context: Context, val listener: Screenshot
     }
 
     private fun isScreenshotPath(path: String?): Boolean {
-        return path != null && path.toLowerCase().contains("screenshots")
+        return path != null && path.toLowerCase().contains("screenshots") && previousPath != path
     }
 
     private fun getFilePathFromContentResolver(context: Context, uri: Uri): String? {
