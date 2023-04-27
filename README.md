@@ -55,7 +55,6 @@ const requestPermission = async () => {
 ```js
 import {
   addScreenshotListener,
-  removeScreenshotListener,
 } from 'react-native-detector';
 
 // ...
