@@ -17,88 +17,88 @@ import java.lang.Exception
 
 
 class ScreenshotDetectionDelegate(val context: Context, val listener: ScreenshotDetectionListener) {
-  lateinit var contentObserver: ContentObserver
+    lateinit var contentObserver: ContentObserver
 
-  var isListening = false
-  var previousPath = ""
+    var isListening = false
+    var previousPath = ""
 
-  fun startScreenshotDetection() {
-    val contentObserver: ContentObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
-      override fun onChange(selfChange: Boolean, uri: Uri?) {
+    fun startScreenshotDetection() {
+        val contentObserver: ContentObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
+            override fun onChange(selfChange: Boolean, uri: Uri?) {
 
-        super.onChange(selfChange, uri)
-        if (!isReadExternalStoragePermissionGranted()) {
-          onScreenCapturedWithDeniedPermission()
+                super.onChange(selfChange, uri)
+                if (!isReadExternalStoragePermissionGranted()) {
+                    onScreenCapturedWithDeniedPermission()
+                }
+
+                if (uri != null) {
+                    val path = getFilePathFromContentResolver(context, uri)
+                    if (path != null && isScreenshotPath(path)) {
+                        previousPath = path
+                        onScreenCaptured(path!!)
+                    }
+                }
+            }
         }
 
-        if (uri != null) {
-          val path = getFilePathFromContentResolver(context, uri)
-          if (path != null && isScreenshotPath(path)) {
-            previousPath = path
-            onScreenCaptured(path!!)
-          }
+        context.contentResolver.registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                true,
+                contentObserver)
+        isListening = true
+    }
+
+    fun stopScreenshotDetection() {
+        context.getContentResolver().unregisterContentObserver(contentObserver)
+        isListening = false
+    }
+
+    private fun onScreenCaptured(path: String) {
+        listener.onScreenCaptured(path)
+    }
+
+    private fun onScreenCapturedWithDeniedPermission() {
+        listener.onScreenCapturedWithDeniedPermission()
+    }
+
+    private fun isScreenshotPath(path: String): Boolean {
+        if (!path.lowercase().contains("screenshot")) {
+            return false
         }
-      }
+        // Cannot check that the onChange event is for an insert operation until API level 30
+        // Instead, we save the last path and check if this is a duplicate, since each subsequent
+        // screenshot will have a new path
+        if (previousPath.isEmpty()) {
+            return true
+        }
+        return path.compareTo(previousPath) != 0
     }
 
-    context.contentResolver.registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-        true,
-        contentObserver)
-    isListening = true
-  }
+    private fun getFilePathFromContentResolver(context: Context, uri: Uri): String? {
+        try {
 
-  fun stopScreenshotDetection() {
-    context.getContentResolver().unregisterContentObserver(contentObserver)
-    isListening = false
-  }
+            val cursor = context.contentResolver.query(uri, arrayOf(MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATA), null, null, null)
+            if (cursor != null && cursor.moveToFirst()) {
+                val path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
+                cursor.close()
+                return path
+            }
+        } catch (e: Exception) {
 
-  private fun onScreenCaptured(path: String) {
-    listener.onScreenCaptured(path)
-  }
-
-  private fun onScreenCapturedWithDeniedPermission() {
-    listener.onScreenCapturedWithDeniedPermission()
-  }
-
-  private fun isScreenshotPath(path: String): Boolean {
-    if (!path.lowercase().contains("screenshot")) {
-      return false
+        }
+        return null
     }
-    // Cannot check that the onChange event is for an insert operation until API level 30
-    // Instead, we save the last path and check if this is a duplicate, since each subsequent
-    // screenshot will have a new path
-    if (previousPath.isEmpty()) {
-      return true
+
+    private fun isReadExternalStoragePermissionGranted(): Boolean {
+        val isAndroid13OrAbove = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+
+        if (isAndroid13OrAbove) {
+            return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED
+        }
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
-    return path.compareTo(previousPath) != 0
-  }
-
-  private fun getFilePathFromContentResolver(context: Context, uri: Uri): String? {
-    try {
-
-      val cursor = context.contentResolver.query(uri, arrayOf(MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATA), null, null, null)
-      if (cursor != null && cursor.moveToFirst()) {
-        val path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
-        cursor.close()
-        return path
-      }
-    } catch (e: Exception) {
-
-    }
-    return null
-  }
-
-  private fun isReadExternalStoragePermissionGranted(): Boolean {
-    val isAndroid13OrAbove = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-
-    if (isAndroid13OrAbove) {
-      return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED
-    }
-    return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-  }
 }
 
 interface ScreenshotDetectionListener {
-  fun onScreenCaptured(path: String)
-  fun onScreenCapturedWithDeniedPermission()
+    fun onScreenCaptured(path: String)
+    fun onScreenCapturedWithDeniedPermission()
 }
